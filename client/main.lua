@@ -1,13 +1,6 @@
-QBCore = nil
 local mining = false
 
 Citizen.CreateThread(function()
-    while QBCore == nil do
-        TriggerEvent("QBCore:GetObject", function(obj)
-            QBCore = obj
-        end)
-        Wait(0)
-    end
     while QBCore.Functions.GetPlayerData().job == nil do
         Wait(0)
     end
@@ -28,15 +21,15 @@ Citizen.CreateThread(function()
                     RequestAnimDict('amb@medic@standing@kneel@base')
                     RequestAnimDict('anim@gangops@facility@servers@bodysearch@')
                     FreezeEntityPosition(pid, true)
-
+                    
                     local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, 0.9, -0.98))
                     prop1 = CreateObject(GetHashKey('hei_prop_heist_box'), x, y, z, true, true, true)
-
+                    
                     TaskPlayAnim(PlayerPedId(), "amb@medic@standing@kneel@base", "base", 8.0, -8.0, -1, 1, 0, false,
                         false, false)
                     TaskPlayAnim(PlayerPedId(), "anim@gangops@facility@servers@bodysearch@", "player_search", 8.0, -8.0,
                         -1, 48, 0, false, false, false)
-
+                    
                     Citizen.Wait(6000)
                     DeleteObject(prop1)
                     ClearPedTasksImmediately(PlayerPedId())
@@ -65,12 +58,12 @@ Citizen.CreateThread(function()
                         SetEntityCoords(PlayerPedId(), closeTo.coords)
                         SetEntityHeading(PlayerPedId(), closeTo.heading)
                         FreezeEntityPosition(PlayerPedId(), true)
-
+                        
                         local model = loadModel(GetHashKey(Config.Objects['pickaxe']))
                         local axe = CreateObject(model, GetEntityCoords(PlayerPedId()), true, false, false)
                         AttachEntityToEntity(axe, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 57005), 0.09, 0.03,
                             -0.02, -78.0, 13.0, 28.0, false, true, true, true, 0, true)
-
+                        
                         while mining do
                             Wait(0)
                             SetCurrentPedWeapon(PlayerPedId(), GetHashKey('WEAPON_UNARMED'))
