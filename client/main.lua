@@ -3,9 +3,9 @@ local mining = false
 Citizen.CreateThread(function()
     local ped = PlayerPedId()
     for k, v in pairs(Config.MiningPositions) do
-        addBlip(v.coords, 618, 5, 'Mine')
+        addBlip(v.coords, 618, 5, 0.5, 'Mine')
     end
-    addBlip(Config.Sell, 207, 1, 'Sell mined items')
+    addBlip(Config.Sell, 207, 1, 0.5, 'Sell mined items')
 
     Citizen.CreateThread(function()
         while true do
@@ -112,10 +112,11 @@ helpText = function(msg)
     EndTextCommandDisplayHelp(0, false, true, -1)
 end
 
-addBlip = function(coords, sprite, colour, text)
+addBlip = function(coords, sprite, colour, scale, text)
     local blip = AddBlipForCoord(coords)
     SetBlipSprite(blip, sprite)
     SetBlipColour(blip, colour)
+    SetBlipScale(blip, scale)
     SetBlipAsShortRange(blip, true)
     BeginTextCommandSetBlipName("STRING")
     AddTextComponentString(text)
