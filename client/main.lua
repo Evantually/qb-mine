@@ -1,4 +1,5 @@
 local mining = false
+local QBCore = exports['qb-core']:GetCoreObject()
 
 Citizen.CreateThread(function()
     local ped = PlayerPedId()

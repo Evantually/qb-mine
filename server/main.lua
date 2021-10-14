@@ -1,3 +1,4 @@
+local QBCore = exports['qb-core']:GetCoreObject()
 local sellables = {
     steel = Config.Price.steel,
     iron = Config.Price.iron,
