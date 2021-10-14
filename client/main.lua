@@ -1,32 +1,67 @@
 local mining = false
 local QBCore = exports['qb-core']:GetCoreObject()
 
-Citizen.CreateThread(function()
+-- Functions
+local function loadModel(model)
+    while not HasModelLoaded(model) do
+        Wait(0)
+        RequestModel(model)
+    end
+    return model
+end
+
+local function loadDict(dict, anim)
+    while not HasAnimDictLoaded(dict) do
+        Wait(0)
+        RequestAnimDict(dict)
+    end
+    return dict
+end
+
+local function helpText(msg)
+    BeginTextCommandDisplayHelp('STRING')
+    AddTextComponentSubstringPlayerName(msg)
+    EndTextCommandDisplayHelp(0, false, true, -1)
+end
+
+local function addBlip(coords, sprite, colour, scale, text)
+    local blip = AddBlipForCoord(coords)
+    SetBlipSprite(blip, sprite)
+    SetBlipColour(blip, colour)
+    SetBlipScale(blip, scale)
+    SetBlipAsShortRange(blip, true)
+    BeginTextCommandSetBlipName('STRING')
+    AddTextComponentString(text)
+    EndTextCommandSetBlipName(blip)
+end
+
+-- Threads
+CreateThread(function()
     local ped = PlayerPedId()
     for k, v in pairs(Config.MiningPositions) do
         addBlip(v.coords, 618, 5, 0.5, 'Mine')
     end
     addBlip(Config.Sell, 207, 1, 0.5, 'Sell mined items')
 
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while true do
-            sleep = 250
+            local sleep = 250
             if #(GetEntityCoords(PlayerPedId()) - Config.Sell) <= 3.0 then
-                sleep = 0
+                local sleep = 0
                 helpText('Press ~INPUT_CONTEXT~ to sell all your mined items.')
                 if IsControlJustReleased(0, 38) then
-                    TriggerServerEvent('qb-mine:sell')
+                    TriggerServerEvent('qb-mine:server:sell')
                     RequestAnimDict('amb@medic@standing@kneel@base')
                     RequestAnimDict('anim@gangops@facility@servers@bodysearch@')
                     FreezeEntityPosition(ped, true)
-                    
+
                     local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(ped, 0.0, 0.9, -0.98))
                     prop1 = CreateObject(`hei_prop_heist_box`, x, y, z, true, true, true)
                     
-                    TaskPlayAnim(ped, "amb@medic@standing@kneel@base", "base", 8.0, -8.0, -1, 1, 0, false, false, false)
-                    TaskPlayAnim(ped, "anim@gangops@facility@servers@bodysearch@", "player_search", 8.0, -8.0, -1, 48, 0, false, false, false)
-                    
-                    Citizen.Wait(6000)
+                    TaskPlayAnim(ped, 'amb@medic@standing@kneel@base', 'base', 8.0, -8.0, -1, 1, 0, false, false, false)
+                    TaskPlayAnim(ped, 'anim@gangops@facility@servers@bodysearch@', 'player_search', 8.0, -8.0, -1, 48, 0, false, false, false)
+
+                    Wait(6000)
                     DeleteObject(prop1)
                     ClearPedTasksImmediately(ped)
                     FreezeEntityPosition(ped, false)
@@ -73,7 +108,7 @@ Citizen.CreateThread(function()
                                     DisableControlAction(0, 24, true)
                                 end
                                 ClearPedTasks(ped)
-                                TriggerServerEvent('qb-mine:getItem')
+                                TriggerServerEvent('qb-mine:server:getItem')
                             elseif IsControlJustReleased(0, 194) then
                                 break
                             end
@@ -90,36 +125,3 @@ Citizen.CreateThread(function()
         Wait(250)
     end
 end)
-
-loadModel = function(model)
-    while not HasModelLoaded(model) do
-        Wait(0)
-        RequestModel(model)
-    end
-    return model
-end
-
-loadDict = function(dict, anim)
-    while not HasAnimDictLoaded(dict) do
-        Wait(0)
-        RequestAnimDict(dict)
-    end
-    return dict
-end
-
-helpText = function(msg)
-    BeginTextCommandDisplayHelp('STRING')
-    AddTextComponentSubstringPlayerName(msg)
-    EndTextCommandDisplayHelp(0, false, true, -1)
-end
-
-addBlip = function(coords, sprite, colour, scale, text)
-    local blip = AddBlipForCoord(coords)
-    SetBlipSprite(blip, sprite)
-    SetBlipColour(blip, colour)
-    SetBlipScale(blip, scale)
-    SetBlipAsShortRange(blip, true)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentString(text)
-    EndTextCommandSetBlipName(blip)
-end
