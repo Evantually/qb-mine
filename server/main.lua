@@ -20,9 +20,9 @@ RegisterServerEvent('qb-mine:server:sell', function()
     for k,v in pairs(sellables) do
         local item = Player.Functions.GetItemByName(k)
         if item ~= nil then
-            if xPlayer.Functions.RemoveItem(k, item.amount) then
+            if Player.Functions.RemoveItem(k, item.amount) then
                 TriggerClientEvent('QBCore:Notify', src, 'You sold '..item.amount..' '..k, 'success')
-                xPlayer.Functions.AddMoney('cash', v * item.amount)
+                Player.Functions.AddMoney('cash', v * item.amount)
             end
         end
     end
