@@ -1,4 +1,6 @@
 # qb-mine
+Video preview: https://youtu.be/oolfOAlhQvs
+
 Major refactor of qb-mine from https://github.com/izMystic
 
 Mining for QB-Core ⛏️

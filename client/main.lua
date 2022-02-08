@@ -336,8 +336,6 @@ RegisterNetEvent('qb-mine:client:startsmelt', function() -- Start smelting
 					ClearPedTasks(Ped)
 					TriggerServerEvent('qb-mine:server:getItem', Config.SmeltingItems)
 				end)
-			else
-				QBCore.Functions.Notify('Not hot enough to smelt here.', 'error')
 			end
 		end
 	end
