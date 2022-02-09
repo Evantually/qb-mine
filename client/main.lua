@@ -11,6 +11,7 @@ local WashingLocations = {}
 local SmeltingLocations = {}
 local Blips = {}
 local Peds = {}
+local mineWait = false
 
 -- Functions
 
@@ -251,32 +252,40 @@ RegisterNetEvent('qb-mine:client:DestroyPeds', function() -- Destroy spawned ped
 end)
 
 RegisterNetEvent('qb-mine:client:startmine', function() -- Start mining
-	local Ped = PlayerPedId()
-	local coord = GetEntityCoords(Ped)
-	for k, v in pairs(MiningLocations) do
-		if MiningLocations[k] then
-			if MiningLocations[k]:isPointInside(coord) then
-				local model = loadModel(`prop_tool_pickaxe`)
-                local axe = CreateObject(model, GetEntityCoords(Ped), true, false, false)
-                AttachEntityToEntity(axe, Ped, GetPedBoneIndex(Ped, 57005), 0.09, 0.03, -0.02, -78.0, 13.0, 28.0, false, true, true, true, 0, true)
-				QBCore.Functions.Progressbar("startmine", "Hacking and smacking", 3000, false, false, {
-					disableMovement = true,
-					disableCarMovement = true,
-					disableMouse = false,
-					disableCombat = true,
-				}, {
-					animDict = "melee@hatchet@streamed_core",
-					anim = "plyr_rear_takedown_b",
-					flags = 16,
-				}, {}, {}, function() -- Done
-					Wait(1000)
-					StopAnimTask(Ped, "melee@hatchet@streamed_core", "startmine", 1.0)
-					ClearPedTasks(Ped)
-					DeleteObject(axe)
-					TriggerServerEvent('qb-mine:server:getItem', Config.MiningItems)
-				end)
+	if not mineWait then
+		mineWait = true
+		SetTimeout(5000, function()
+			mineWait = false
+		end)
+		local Ped = PlayerPedId()
+		local coord = GetEntityCoords(Ped)
+		for k, v in pairs(MiningLocations) do
+			if MiningLocations[k] then
+				if MiningLocations[k]:isPointInside(coord) then
+					local model = loadModel(`prop_tool_pickaxe`)
+					local axe = CreateObject(model, GetEntityCoords(Ped), true, false, false)
+					AttachEntityToEntity(axe, Ped, GetPedBoneIndex(Ped, 57005), 0.09, 0.03, -0.02, -78.0, 13.0, 28.0, false, true, true, true, 0, true)
+					QBCore.Functions.Progressbar("startmine", "Hacking and smacking", 3000, false, false, {
+						disableMovement = true,
+						disableCarMovement = true,
+						disableMouse = false,
+						disableCombat = true,
+					}, {
+						animDict = "melee@hatchet@streamed_core",
+						anim = "plyr_rear_takedown_b",
+						flags = 16,
+					}, {}, {}, function() -- Done
+						Wait(1000)
+						StopAnimTask(Ped, "melee@hatchet@streamed_core", "startmine", 1.0)
+						ClearPedTasks(Ped)
+						DeleteObject(axe)
+						TriggerServerEvent('qb-mine:server:getItem', Config.MiningItems)
+					end)
+				end
 			end
 		end
+	else
+		QBCore.Functions.Notify("You need to wait a few more seconds to catch your breath.", "error")
 	end
 end)
 
